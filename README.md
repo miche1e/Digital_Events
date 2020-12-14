@@ -1,9 +1,5 @@
 # Digital_Events
 
-- obbligatori
-? facoltativi
-
-
 ---OBJECTS---
 
 user ={
