@@ -18,8 +18,8 @@ user ={
 }
 
 location = {
-	-id
-	-description
+  -id
+  -description
   -position
 }
 
