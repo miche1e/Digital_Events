@@ -19,11 +19,6 @@ location = {
   -position
 }
 
-position = {
-  -lat
-  -long
-}
-
 
 ---CRUD---
 
@@ -37,8 +32,6 @@ GET   /signout
 GET   /location []
 
 GET   /location/:id
-
-POST  /locations  {location}
 
 
 *AUTH Role == "ADMIN"*
