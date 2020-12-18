@@ -52,12 +52,6 @@ router.get("/logout", async(req, res) => {
     }
 });
 
-async function updateQuotes() {
-    quotes.length = 0;
-    const list = await db.collection("quotes").get();
-    list.forEach(doc => quotes.push(doc.data()));
-}
-
 router.get("/locations", async (req, res) => {
     try {
         const locations = new Array();
