@@ -14,6 +14,14 @@ appId: "1:947238163505:web:85fc6008228aaf8c1d3110"
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig);
 
+//Initialize Firebase Admin
+admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount)
+});
+
+//Connecting to db
+const db = admin.firestore();
+
 const router = express.Router();
 let isAuthorized = false;
 
@@ -43,4 +51,36 @@ router.get("/logout", async(req, res) => {
         return res.status(500).send(error);
     }
 });
+
+async function updateQuotes() {
+    quotes.length = 0;
+    const list = await db.collection("quotes").get();
+    list.forEach(doc => quotes.push(doc.data()));
+}
+
+router.get("/locations", async (req, res) => {
+    try {
+        const locations = new Array();
+        const rawList = await db.collection("locations").get();
+        rawList.forEach(doc => {
+            locations.push(doc.data());
+        });
+        return res.status(200).json(locations);
+    } catch (error) {
+        return res.status(500).send(error.toString());
+    }
+});
+
+router.get("/locations/:id", async (req, res) => {
+    try {
+        const location = await db.collection('locations').doc(req.params.id).get();
+        if (!location.data()) {
+            return res.status(404).json({message: "Location not found"});
+        }
+        return res.status(200).json(location.data());
+    } catch (error) {
+        return res.status(500).send(error.toString());
+    }
+});
+
 module.exports = router;

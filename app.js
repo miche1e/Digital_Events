@@ -4,7 +4,7 @@ const app = express();
 const bodyParser = require("body-parser");
 app.use(bodyParser.json());
 
-const qeventsRoutes = require("./routes");
+const eventsRoutes = require("./routes");
 app.use(eventsRoutes);
 
 app.get("/", (req, res) => {
