@@ -43,4 +43,32 @@ router.get("/logout", async(req, res) => {
         return res.status(500).send(error);
     }
 });
+
+async function newId() {
+    const locations = [];
+    const list = await db.collection("locations").get();
+    list.forEach(doc => locations.push(doc.data()));
+    return locations.length > 0 ? Math.max(...locations.map(location => location.id)) + 1 : 1
+}
+
+router.post("/location", async (req, res) => {
+    if (authRole == "admin") {
+        try {
+            if (!req.body.location) {
+                return res.status(400).json({ message: "Bad request: missing location!" });
+            }
+            const newLocation;
+            newLocation = {
+                id: newId(),
+                description: req.body.description,
+                position: req.body.position
+            }
+            db.collection('quotes').doc(newId.toString()).set(newQuote);
+            return res.status(201).json({ message: "Created" });
+        }catch{};
+    } else {
+        return res.status(403).json({ message: "you're not allowed to add this content!"});
+    }
+});
+
 module.exports = router;
