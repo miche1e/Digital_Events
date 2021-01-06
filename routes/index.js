@@ -25,6 +25,46 @@ const db = admin.firestore();
 const router = express.Router();
 let isAuthorized = false;
 
+router.post("/signup", async(req, res) => {
+    try {
+        if(req.body.password === "" || req.body.email === ""){
+            return res.status(400).json({message:"you have to insert an email and password"});
+        }
+        if(!req.body.firstName || req.body.firstName === ""){
+            return res.status(400).json({message:"you have to insert first name"});
+        }
+        if(!req.body.lastName || req.body.lastName === ""){
+            return res.status(400).json({message:"you have to insert first name"});
+        }
+        if(req.body.password != req.body.password2){
+            return res.status(400).json({message:"your passwords don't match!"});
+        }
+        const user = await firebase.auth().createUserWithEmailAndPassword(req.body.email, req.body.password);
+        const userId = await user.user.uid;
+        const email = await user.user.email;
+        const firstName = await req.body.firstName;
+        const lastName = await req.body.lastName;
+        let phone = await req.body.phone;
+        if(!phone || phone === ""){
+            phone = null;
+        }else if(isNaN(phone)){
+            return res.status(400).json({message:"you have to enter numbers in phone field"});
+        }
+        let newUser = {
+            email: email,
+            firstName: firstName,
+            lastName: lastName,
+            phone: phone,
+            position: null,
+            role: "user"
+        }
+        db.collection('users').doc(userId.toString()).set(newUser);
+        return res.status(201).json({message: "You registered succesfully!"});
+    } catch (error) {
+        return res.status(500).send(error.toString());
+    }
+});
+
 router.post("/login", async(req, res) => {
     try {//gestione errori
         if(req.body.password === "" || req.body.email === ""){
